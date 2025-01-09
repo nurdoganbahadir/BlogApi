@@ -12,13 +12,23 @@ const PORT = process.env.PORT || 8000;
 require("express-async-errors");
 
 const session = require("cookie-session");
+const { openDelimiter, closeDelimiter } = require("ejs");
 app.use(
-  session({ secret: process.env.SECRET_KEY || "secret_keys_for_cookies" }),
+  session({ secret: process.env.SECRET_KEY || "secret_keys_for_cookies" })
 );
 /* ------------------------------------------------------- */
 // Accept json data & convert to object:
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//default delimiter: <% %>
+// example delimiter :<< >>, {{ }}, {% %}
+app.set("view engine", "ejs");
+app.set("view options", {
+  //delimeter: '%',
+  openDelimiter: "{",
+  closeDelimiter: "}",
+});
 
 // Connect to MongoDB with Mongoose:
 require("./src/dbConnection");
