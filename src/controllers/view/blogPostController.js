@@ -4,16 +4,22 @@
 ------------------------------------------------------- */
 
 const BlogPost = require("../../models/blogPostModel");
-
+const BlogCategory = require("../../models/blogCategoryModel");
 // ------------------------------------------
 // BlogPost
 // ------------------------------------------
 
 module.exports = {
   list: async (req, res) => {
-    const data = await res.getModelList(BlogPost,{}, "blogCategoryId");
+    const posts = await res.getModelList(BlogPost, {}, "blogCategoryId"); // 10
 
-    res.render('index')
+    const categories = await BlogCategory.find({});
+
+    const recentPosts = await BlogPost.find()
+      .sort({ createdAt: "desc" })
+      .limit(3);
+
+    res.render("index", { categories, posts, recentPosts });
   },
 
   create: async (req, res) => {
@@ -30,7 +36,7 @@ module.exports = {
     // req.params.postId
     // const data = await BlogPost.findById(req.params.postId)
     const data = await BlogPost.findOne({ _id: req.params.postId }).populate(
-      "blogCategoryId",
+      "blogCategoryId"
     ); // get Primary Data
 
     res.status(200).send({
@@ -44,7 +50,7 @@ module.exports = {
     const data = await BlogPost.updateOne(
       { _id: req.params.postId },
       req.body,
-      { runValidators: true },
+      { runValidators: true }
     );
 
     res.status(202).send({
