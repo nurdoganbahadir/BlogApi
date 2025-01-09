@@ -29,6 +29,7 @@ app.set("view options", {
   openDelimiter: "{",
   closeDelimiter: "}",
 });
+app.set("views", "./public");
 
 // Connect to MongoDB with Mongoose:
 require("./src/dbConnection");
