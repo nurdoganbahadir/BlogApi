@@ -65,52 +65,39 @@ module.exports = {
   },
 
   login: async (req, res) => {
-    const { email, password } = req.body;
-    
-
-
     if (req.method == "POST") {
-    } else {
-      res.render("loginForm")
-    }
 
+      const { email, password } = req.body;
 
+      if (email && password) {
+        const user = await User.findOne({ email: email, password: password });
 
+        if (user) {
+          // Set Session:
+          req.session = {
+            user: {
+              id: user.id,
+              email: user.email,
+              password: user.password,
+            },
+          };
+          // Set Cookie:
+          if (req.body?.rememberMe) {
+            // Set Cookie maxAge:
+            req.sessionOptions.maxAge = 1000 * 60 * 60 * 24 * 3; // 3 Days
+          }
 
-
-
-    if (email && password) {
-      // const user = await User.findOne({ email: email, password: passwordEncrypt(password) })
-      // No need passwordEncrypt, because using "set" in model:
-      const user = await User.findOne({ email: email, password: password });
-
-      if (user) {
-        // Set Session:
-        req.session = {
-          user: {
-            id: user.id,
-            email: user.email,
-            password: user.password,
-          },
-        };
-        // Set Cookie:
-        if (req.body?.rememberMe) {
-          // Set Cookie maxAge:
-          req.sessionOptions.maxAge = 1000 * 60 * 60 * 24 * 3; // 3 Days
+          res.redirect('/blog/post')
+        } else {
+          res.errorStatusCode = 401;
+          throw new Error("Login parameters are not true.");
         }
-
-        res.status(200).send({
-          error: false,
-          result: user,
-          session: req.session,
-        });
       } else {
         res.errorStatusCode = 401;
-        throw new Error("Login parameters are not true.");
+        throw new Error("Email and Password are required.");
       }
     } else {
-      res.errorStatusCode = 401;
-      throw new Error("Email and Password are required.");
+      res.render("loginForm");
     }
   },
 
