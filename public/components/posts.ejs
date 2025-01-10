@@ -20,10 +20,10 @@
   <span class="text-primary">...read more</span>
 
   <div class="admin-area text-end">
-    <a class="btn btn-sm btn-primary" href="/post/:id/update">Update</a>
+    <a class="btn btn-sm btn-primary" href="/blog/post/{%= post._id %}/update">Update</a>
     <a
       class="btn btn-sm btn-danger"
-      href="/post/:id/delete"
+      href="/blog/post/{%= post._id %}/delete"
       onclick="return confirm('Are you sure?')"
       >Delete</a
     >
