@@ -104,9 +104,6 @@ module.exports = {
   logout: async (req, res) => {
     // Set session to null:
     req.session = null;
-    res.status(200).send({
-      error: false,
-      message: "Logout OK",
-    });
+    res.redirect('/blog/post')
   },
 };
