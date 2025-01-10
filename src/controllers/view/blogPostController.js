@@ -6,6 +6,7 @@
 const BlogPost = require("../../models/blogPostModel");
 const BlogCategory = require("../../models/blogCategoryModel");
 const removeQueryParam = require("../../helpers/removeQueryParam");
+const blogCategoryModel = require("../../models/blogCategoryModel");
 // ------------------------------------------
 // BlogPost
 // ------------------------------------------
@@ -41,13 +42,20 @@ module.exports = {
   },
 
   create: async (req, res) => {
-    const data = await BlogPost.create(req.body);
+    if (req.method == "POST") {
 
-    res.status(201).send({
-      error: false,
-      body: req.body,
-      result: data,
-    });
+      req.body.userId = req.session?.user.id;
+
+      const data = await BlogPost.create(req.body);
+
+      if(data) res.redirect('/blog/post')
+    
+    } else {
+      
+      const categories = await BlogCategory.find();
+      
+      res.render("postForm", { categories });
+    }
   },
 
   read: async (req, res) => {
@@ -57,7 +65,7 @@ module.exports = {
       "blogCategoryId"
     );
 
-    res.render("postRead",{post});
+    res.render("postRead", { post });
   },
 
   update: async (req, res) => {
